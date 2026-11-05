@@ -2690,7 +2690,7 @@ function holdBtn(el, fn, ms, need) {
     e.preventDefault(); e.stopPropagation(); if (started) audio();
     if (need && !need()) { fn(); return; }
     el.classList.add('hold');
-    tm = setTimeout(() => { stop(); if (ac) tone([660, 990], .12, { type: 'sine', v: .1 }); fn(); }, ms || 600);
+    tm = setTimeout(() => { stop(); if (ac) tone([660, 990], .12, { type: 'sine', v: .1 }); fn(); }, ms || 300);
   });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, () => { if (tm) { stop(); if (ev === 'pointerup') showHint('Удерживайте кнопку'); } }));
 }
@@ -2704,7 +2704,7 @@ function updMbtn() {
   gmsEl.innerHTML = '';
   GMS.forEach(([g, ic, lab]) => {
     const b = document.createElement('button'); b.className = g === gm ? 'on' : ''; b.innerHTML = '<i>' + ic + '</i><span>' + lab + '</span>'; b.setAttribute('aria-label', lab);
-    holdBtn(b, () => { if (g !== gm) setGame(g); }, 450, () => S.hold && g !== gm);
+    holdBtn(b, () => { if (g !== gm) setGame(g); }, 300, () => S.hold && g !== gm);
     gmsEl.appendChild(b);
   });
 }
@@ -2729,7 +2729,7 @@ function openModes() {
   renderModes(); mpop.classList.add('on'); clearTimeout(popT); popT = setTimeout(closeModes, 10000);
 }
 function closeModes() { clearTimeout(popT); mpop.classList.remove('on'); }
-holdBtn(mbtn, openModes, 450, () => S.hold);
+holdBtn(mbtn, openModes, 300, () => S.hold);
 function setMode(i) {
   if (i === md) return;
   md = i; lastIdx = -1;
@@ -2752,8 +2752,8 @@ function toggleDay() {
   if (panelOpen) renderPanel();
 }
 function autoNight() { if (S.night === 'auto') { const h = new Date().getHours(); setNight(h >= 20 || h < 7); } else setNight(S.night === 'night'); }
-holdBtn($('gear'), openPanel, 700);
-holdBtn($('dn'), toggleDay, 450, () => S.hold);
+holdBtn($('gear'), openPanel, 300);
+holdBtn($('dn'), toggleDay, 300, () => S.hold);
 // кнопки «звук» и «музыка»
 function applySnd() {
   if (!ac || !sfxBus) return; const k = S.sndOff ? 0 : 1, t = ac.currentTime;
@@ -2764,12 +2764,12 @@ function updAud() {
   $('sndb').textContent = S.sndOff ? '🔇' : '🔊'; $('sndb').classList.toggle('off', !!S.sndOff);
   $('musb').classList.toggle('off', !!S.musOff);
 }
-holdBtn($('sndb'), () => { S.sndOff = !S.sndOff; save(); applySnd(); updAud(); }, 450, () => S.hold);
-holdBtn($('musb'), () => { S.musOff = !S.musOff; save(); applyMus(.2); updAud(); }, 450, () => S.hold);
+holdBtn($('sndb'), () => { S.sndOff = !S.sndOff; save(); applySnd(); updAud(); }, 300, () => S.hold);
+holdBtn($('musb'), () => { S.musOff = !S.musOff; save(); applyMus(.2); updAud(); }, 300, () => S.hold);
 updAud();
 let panelOpen = false;
 function openPanel() { closeModes(); panelOpen = true; $('panel').classList.add('on'); renderPanel(); }
-function closePanel() { panelOpen = false; recStop(); $('panel').classList.remove('on'); save(); }
+function closePanel() { panelOpen = false; $('panel').classList.remove('on'); save(); }
 $('panel').addEventListener('pointerdown', e => { if (e.target === $('panel')) closePanel(); });
 function el(tag, attrs, kids) { const e = document.createElement(tag); for (const k in attrs || {}) { if (k === 'on') for (const ev in attrs.on) e.addEventListener(ev, attrs.on[ev]); else if (k === 'text') e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); } (kids || []).forEach(c => c && e.appendChild(c)); return e; }
 function slider(label, val, min, max, step, set) {
