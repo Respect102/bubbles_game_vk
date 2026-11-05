@@ -736,7 +736,7 @@ function say(text, after, key, vk) {
     curClip = s2; duck(true); setTimeout(fin, (c.d + .4) * 1000);
     return;
   }
-  // только голос Ксюши: если фраза ещё загружается — ждём до 2 с, иначе молчим
+  // только записанный голос: если фраза ещё загружается — ждём до 2 с, иначе молчим
   if (!vk || !ac || S.voice < .01 || S.sndOff) { setTimeout(fin, 60); return; }
   const t0 = now();
   const wait = () => { if (my !== sayTok) return; if (vclip(vk)) { sayTok--; say(text, after, key, vk); return; } if (now() - t0 > 2000) { fin(); return; } setTimeout(wait, 100); };
