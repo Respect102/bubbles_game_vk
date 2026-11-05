@@ -1538,7 +1538,7 @@ function cHouse(x, hx, hb, s, wall, roof, opts) {
   x.strokeStyle = shade(roof, .85); lw(x, .4); for (let i = 1; i < 4; i++) { const t = i / 4, y = hb - s * .58 - (s * (rt - .58)) * (1 - t) * .9; x.beginPath(); x.moveTo(hx - s * rw * t, y + s * .02); x.lineTo(hx + s * rw * t, y + s * .02); x.stroke(); }
   if (opts.barn) { rr(x, hx - s * .2, hb - s * .42, s * .4, s * .42, s * .04); fo(x, '#ffffff'); x.strokeStyle = shade(wall, .8); lw(x, .7); x.beginPath(); x.moveTo(hx - s * .17, hb - s * .39); x.lineTo(hx + s * .17, hb - s * .03); x.moveTo(hx + s * .17, hb - s * .39); x.lineTo(hx - s * .17, hb - s * .03); x.stroke(); x.beginPath(); x.arc(hx, hb - s * .76, s * .09, 0, 7); fo(x, '#ffe9a8', .5); shine(x, hx - s * .03, hb - s * .79, s * .03, s * .02, 0, .9); }
   else { rr(x, hx - s * .12, hb - s * .36, s * .24, s * .36, s * .1); fo(x, '#a86b45', .6); x.beginPath(); x.arc(hx + s * .06, hb - s * .18, s * .02, 0, 7); x.fillStyle = '#ffd84d'; x.fill();
-    for (const wx of [hx - s * .4, hx + s * .2]) { if (night && (wx > hx || hx < W / 2)) NFX.wins.push([wx, hb - s * .52, s * .2, s * .17]); rr(x, wx, hb - s * .52, s * .2, s * .17, s * .04); fo(x, '#bfe6ff', .5, '#ffffff'); x.fillStyle = '#ffffff'; x.fillRect(wx + s * .095, hb - s * .52, s * .012, s * .17); shine(x, wx + s * .05, hb - s * .47, s * .025, s * .015, 0, .8); }
+    for (const wx of [hx - s * .4, hx + s * .2]) { const lit = night && (wx > hx || hx < W / 2); rr(x, wx, hb - s * .52, s * .2, s * .17, s * .04); fo(x, '#bfe6ff', .5, '#ffffff'); if (lit) { NFX.near.push([wx, hb - s * .52, s * .2, s * .17]); rr(x, wx + 1, hb - s * .52 + 1, s * .2 - 2, s * .17 - 2, s * .035); x.fillStyle = LITC; x.fill(); } x.fillStyle = '#ffffff'; x.fillRect(wx + s * .095, hb - s * .52, s * .012, s * .17); if (!lit) shine(x, wx + s * .05, hb - s * .47, s * .025, s * .015, 0, .8); }
     rr(x, hx + s * .24, hb - s * (opts.big ? 1.1 : 1.0), s * .12, s * .24, s * .03); fo(x, shade(roof, .9)); }
 }
 // раскладка без наложений: кандидаты с проверкой расстояния
@@ -1575,7 +1575,9 @@ function softPeaks(x, base, col, peaks) {
   return hAt;
 }
 // окно: днём вдалеке солнце, ночью луна и звёзды (их потом «зажигаем» поверх ночного затемнения)
-let WLIGHTS = [], FLOWERS = [], NFX = { wins: [], lamps: [], stars: [], notes: [] };
+let WLIGHTS = [], FLOWERS = [], NFX = { wins: [], near: [], lamps: [], stars: [], notes: [] };
+// ночью на улице дальний план (небо и город) и ближний (домики, деревья, светофор) рисуются раздельно, чтобы свет окон оставался позади
+const nearC = document.createElement('canvas'); let NEAR = null; const LITC = '#ffd76d';
 function cWindow(x, wx, wy, ww, wh, frame, noCross) {
   gshadow(x, wx + ww / 2, wy + wh + ww * .1, ww * .6, ww * .03, .08);
   rr(x, wx - ww * .07, wy - ww * .07, ww * 1.14, wh + ww * .14, ww * .08); fo(x, frame || '#ffffff');
@@ -1602,11 +1604,24 @@ function cWindow(x, wx, wy, ww, wh, frame, noCross) {
   shine(x, wx + ww * .18, wy + wh * .2, ww * .07, wh * .025, -.7, .6);
   rr(x, wx - ww * .12, wy + wh + ww * .03, ww * 1.24, ww * .07, ww * .035); fo(x, frame || '#ffffff');
 }
-function nightLights(x) {
+// окна домиков: после затемнения возвращаем тёплый цвет только тем пикселям, которые ничем не заслонены
+function litGrab(c, [wx, wy, ww, wh]) { const x0 = Math.floor(wx * DPR), y0 = Math.floor(wy * DPR), w = Math.ceil(ww * DPR) + 1, h = Math.ceil(wh * DPR) + 1; return { x0, y0, w, h, d: c.getImageData(x0, y0, w, h).data }; }
+function litPut(c, p) {
+  const im = c.getImageData(p.x0, p.y0, p.w, p.h), o = im.data, d = p.d;
+  for (let j = 0; j < p.h; j++) for (let i = 0; i < p.w; i++) {
+    const k = (j * p.w + i) * 4; if (d[k + 3] < 250 || Math.abs(d[k] - 255) > 3 || Math.abs(d[k + 1] - 215) > 3 || Math.abs(d[k + 2] - 109) > 3) continue;
+    const u = i / p.w, v = j / p.h, hi = u > .12 && u < .42 && v > .12 && v < .4;
+    o[k] = 255; o[k + 1] = hi ? 248 : 216; o[k + 2] = hi ? 205 : 110; o[k + 3] = 255;
+  }
+  c.putImageData(im, p.x0, p.y0);
+}
+function farWindows(x) {
   for (const [wx, wy, ww, wh] of NFX.wins) {
     const g = x.createRadialGradient(wx + ww / 2, wy + wh / 2, 1, wx + ww / 2, wy + wh / 2, Math.max(ww, wh) * 1.4); g.addColorStop(0, 'rgba(255,214,110,.45)'); g.addColorStop(1, 'rgba(255,214,110,0)'); x.fillStyle = g; x.fillRect(wx - ww, wy - wh, ww * 3, wh * 3);
     x.fillStyle = '#ffd86e'; rr(x, wx, wy, ww, wh, Math.min(ww, wh) * .25); x.fill(); x.fillStyle = 'rgba(255,250,210,.8)'; rr(x, wx + ww * .15, wy + wh * .12, ww * .35, wh * .3, Math.min(ww, wh) * .12); x.fill();
   }
+}
+function nightLights(x) {
   for (const [lx, ly, gy] of NFX.lamps) {
     const cone = x.createLinearGradient(0, ly, 0, gy); cone.addColorStop(0, 'rgba(255,236,160,.55)'); cone.addColorStop(1, 'rgba(255,236,160,.08)');
     x.fillStyle = cone; x.beginPath(); x.moveTo(lx - M * .018, ly); x.lineTo(lx + M * .018, ly); x.lineTo(lx + M * .11, gy); x.lineTo(lx - M * .11, gy); x.closePath(); x.fill();
@@ -1851,6 +1866,7 @@ const WORLD = {
     if (!night) cSun(x, W * .18, H * .15, M * .05);
     const R = srand(5);
     for (let px = -10; px < W;) { const bw = M * (.09 + R() * .08), bh = H * (.12 + R() * .2), by = H * .72 - bh, c = pick2(R, ['#c9d8f5', '#d8cdf2', '#c3e4ea', '#f0d5e2', '#f5e2c4']); rr(x, px, by, bw - 5, bh + 6, M * .018); fo(x, c, .5); if (R() < .4) { x.beginPath(); x.arc(px + (bw - 5) / 2, by + 2, (bw - 5) * .3, Math.PI, 0); fo(x, shade(c, .92), .5); } x.fillStyle = night ? 'rgba(70,80,120,.9)' : 'rgba(255,255,255,.9)'; for (let wy = by + M * .025; wy < H * .7 - M * .03; wy += M * .045) for (let wx = px + M * .02; wx < px + bw - M * .035; wx += M * .032) if (R() > .3) { rr(x, wx, wy, M * .018, M * .024, M * .006); x.fill(); if (night && R() < .42) NFX.wins.push([wx, wy, M * .018, M * .024]); } px += bw; }
+    if (NEAR) x = NEAR;
     const hs = clamp(M * .14, 54, 100);
     cHouse(x, W * .07, H * .735, hs, '#ff9a8a', '#c5523f', { big: 1 }); cHouse(x, W * .93, H * .735, hs, '#ffd27a', '#c98a32', { big: 1 });
     x.fillStyle = HILLS[1]; x.fillRect(0, H * .72, W, H * .085); lw(x, .6); x.strokeStyle = shade(HILLS[1], .75); x.beginPath(); x.moveTo(0, H * .72); x.lineTo(W, H * .72); x.stroke();
@@ -2175,13 +2191,24 @@ function buildWorld() {
   if (!W) return;
   bgC.width = cv.width; bgC.height = cv.height; bg.setTransform(DPR, 0, 0, DPR, 0, 0);
   const md0 = MODES[md], w = md0.world;
-  WLIGHTS = []; FLOWERS = []; NFX = { wins: [], lamps: [], stars: [], notes: [] };
+  WLIGHTS = []; FLOWERS = []; NFX = { wins: [], near: [], lamps: [], stars: [], notes: [] };
+  NEAR = null;
+  if (night && w === 'road') { nearC.width = bgC.width; nearC.height = bgC.height; NEAR = nearC.getContext('2d'); NEAR.setTransform(DPR, 0, 0, DPR, 0, 0); }
   WORLD[w](bg);
-  if (DECOR[w]) { bg.save(); DECOR[w](bg); bg.restore(); }
+  const nx = NEAR || bg;
+  if (DECOR[w]) { nx.save(); DECOR[w](nx); nx.restore(); }
   calm(bg);
   if (night) {
-    bg.fillStyle = w === 'sea' ? 'rgba(5,15,55,.55)' : 'rgba(16,24,72,.6)'; bg.fillRect(0, 0, W, H);
+    const ov = w === 'sea' ? 'rgba(5,15,55,.55)' : 'rgba(16,24,72,.6)';
+    bg.fillStyle = ov; bg.fillRect(0, 0, W, H);
     if (md0.out) moonDraw(bg, W * .8, H * .2, M * .055);
+    farWindows(bg);
+    if (NEAR) {
+      const pre = NFX.near.map(r => litGrab(NEAR, r));
+      NEAR.globalCompositeOperation = 'source-atop'; calm(NEAR); NEAR.fillStyle = ov; NEAR.fillRect(0, 0, W, H); NEAR.globalCompositeOperation = 'source-over';
+      pre.forEach(p => litPut(NEAR, p));
+      bg.setTransform(1, 0, 0, 1, 0, 0); bg.drawImage(nearC, 0, 0); bg.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
     windowLights(bg);
     nightLights(bg);
   }
@@ -2358,7 +2385,7 @@ function newTarget() {
   if (vis.length) i = d.indexOf(pick(low2.length ? low2 : vis).it);
   else { do { i = Math.random() * d.length | 0; } while (d[i] === prev && d.length > 1); spawnTarget(i); }
   F2.ti = i; F2.tgt = d[i]; F2.ok = false; F2.hint = false; F2.t0 = now();
-  F2.kind = (MODES[md].d === A || MODES[md].d === MU) && soundable(d[i]) && Math.random() < .35 ? 'sound' : 'name';
+  F2.kind = (MODES[md].d === A || MODES[md].d === MU) && soundable(d[i]) && Math.random() < .5 ? 'sound' : 'name';
   hand = null; renderHud(); askTarget();
 }
 function askTarget() {
