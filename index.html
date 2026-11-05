@@ -164,6 +164,12 @@ html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;backgr
 <div class="ov" id="rest"><div class="big">😴</div><p>Пора отдохнуть</p><button class="btn" id="more">🎈 Играть ещё</button></div>
 <div class="ov" id="panel"><div id="pbox"></div></div>
 <div class="ov" id="gal"><div class="gtop"><div id="gtabs"></div><button id="gclose" aria-label="Закрыть">✕</button></div><div id="ggrid"></div></div>
+<script src="vk-bridge.min.js"></script>
+<script>
+// ВКонтакте: сообщаем платформе, что игра запустилась (нужно в первые 30 секунд)
+const IN_VK = /[?&]vk_app_id=/.test(location.search);
+if (window.vkBridge) try { vkBridge.send('VKWebAppInit').catch(() => {}); } catch (e) {}
+</script>
 <script>
 'use strict';
 // =====================================================================
@@ -2923,11 +2929,14 @@ setInterval(() => { if (S.night === 'auto') autoNight(); }, 60000);
 // экран не гаснет
 let wl = null;
 function wake() { try { if (navigator.wakeLock && !wl) navigator.wakeLock.request('screen').then(l => { wl = l; l.onrelease = () => { wl = null; }; }).catch(() => {}); } catch (e) {} }
-document.addEventListener('visibilitychange', () => {
+function appHidden(h) {
   if (!ac) return;
-  if (document.hidden) { ac.suspend(); if (silentEl) silentEl.pause(); }
+  if (h) { ac.suspend(); if (silentEl) silentEl.pause(); }
   else { ac.resume(); if (silentEl && started) silentEl.play().catch(() => {}); wake(); nextBarT = 0; }
-});
+}
+document.addEventListener('visibilitychange', () => appHidden(document.hidden));
+// ВКонтакте: приложение свернули или вернули — выключаем и включаем звук
+if (window.vkBridge) vkBridge.subscribe(e => { const t = e && e.detail && e.detail.type; if (t === 'VKWebAppViewHide') appHidden(true); else if (t === 'VKWebAppViewRestore') appHidden(false); });
 // старт
 $('go').addEventListener('click', e => {
   e.preventDefault(); if (started) return; audio(); unlockIOS(); wake(); loadAnim(); if (!XV) loadXIndex(); loadVoice('gx'); loadVoice('g' + md);
@@ -3131,7 +3140,7 @@ renderModes(); updMbtn(); resize(); autoNight(); loadXIndex();
 for (let i = 0; i < 4; i++) spawn(true);
 requestAnimationFrame(loop);
 $('dn').textContent = night ? '☀️' : '🌙';
-if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+if (!IN_VK && 'serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
 </html>
