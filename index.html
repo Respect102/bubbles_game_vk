@@ -2745,7 +2745,7 @@ function showHint(t) { hintEl.textContent = t; hintEl.classList.add('on'); clear
 function holdBtn(el, fn, ms, need) {
   let tm = 0;
   const stop = () => { clearTimeout(tm); tm = 0; el.classList.remove('hold'); };
-  el.style.setProperty('--hold', (ms || 900) + 'ms');
+  el.style.setProperty('--hold', (ms || 300) + 'ms');
   el.addEventListener('pointerdown', e => {
     e.preventDefault(); e.stopPropagation(); if (started) audio();
     if (need && !need()) { fn(); return; }
