@@ -169,6 +169,28 @@ html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;backgr
 // ВКонтакте: сообщаем платформе, что игра запустилась (нужно в первые 30 секунд)
 const IN_VK = /[?&]vk_app_id=/.test(location.search);
 if (window.vkBridge) try { vkBridge.send('VKWebAppInit').catch(() => {}); } catch (e) {}
+// ВКонтакте: межстраничная реклама только в паузах (смена темы или способа игры, конец раунда «Ловим»),
+// не раньше чем через 3 минуты после запуска и не чаще раза в 3 минуты
+const VKAD = (() => {
+  const GAP = 180000; let last = Date.now(), busy = false;
+  const ok = () => IN_VK && window.vkBridge && !busy && Date.now() - last >= GAP;
+  async function brk() {
+    if (!ok()) return false;
+    busy = true;
+    try {
+      const c = await vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
+      if (!c || !c.result) return false;
+      if (typeof appHidden === 'function') appHidden(true);
+      const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' });
+      if (r && r.result) { last = Date.now(); return true; }
+      return false;
+    } catch (e) { return false; }
+    finally { busy = false; if (typeof appHidden === 'function' && !document.hidden) appHidden(false); }
+  }
+  const share = () => IN_VK && window.vkBridge ? vkBridge.send('VKWebAppShare', { link: 'https://vk.com/app54879179' }).catch(() => {}) : null;
+  const invite = () => IN_VK && window.vkBridge ? vkBridge.send('VKWebAppShowInviteBox').catch(() => {}) : null;
+  return { brk, share, invite };
+})();
 </script>
 <script>
 'use strict';
@@ -2460,10 +2482,11 @@ function roundDone() {
   fanfare(); fireworks(W / 2, H * .4); setMascot('cheer', 3.5);
   sayK('rdone', () => later(() => sayK(pick(['pr0', 'pr3', 'pr4'])), 200));
   bubbles.slice().forEach((q, i) => pop(q, { quiet: true, arp: i }));
-  later(() => startRound(C.round + 1), 4600);
+  later(() => { const t = gTok; VKAD.brk().then(() => { if (t === gTok) startRound(C.round + 1); }); }, 4600);
 }
 // ----- переключение способа игры -----
 function setGame(g, silent) {
+  if (!silent) VKAD.brk();
   gTok++; gm = g; S.gm = g; save();
   for (const b of bubbles) flashes.push({ x: b.x, y: b.y, r: b.r, a: .3 });
   bubbles.length = 0; hand = null; F2.tgt = null; banner = null; C.state = 'off';
@@ -2798,6 +2821,7 @@ function closeModes() { clearTimeout(popT); mpop.classList.remove('on'); }
 holdBtn(mbtn, openModes, 300, () => S.hold);
 function setMode(i) {
   if (i === md) return;
+  VKAD.brk();
   md = i; lastIdx = -1;
   mb.forEach((q, k) => q.classList.toggle('on', k === i)); updMbtn();
   buildWorld(); placeActors();
@@ -2857,6 +2881,10 @@ function renderPanel() {
   const close = el('button', { id: 'pclose', text: '✕', 'aria-label': 'Закрыть' }); close.addEventListener('click', closePanel);
   p.appendChild(el('h2', {}, [el('span', { text: 'Для родителей' }), close]));
   const gb = el('button', { class: 'pbig', text: '🫧 Все шарики: посмотреть и послушать' }); gb.addEventListener('click', () => { closePanel(); openGallery(md); }); p.appendChild(gb);
+  if (IN_VK) {
+    const sh = el('button', { class: 'pbig', text: '📣 Рассказать друзьям об игре' }); sh.addEventListener('click', () => VKAD.share()); p.appendChild(sh);
+    const iv = el('button', { class: 'pbig', text: '👋 Пригласить друзей' }); iv.addEventListener('click', () => VKAD.invite()); p.appendChild(iv);
+  }
   p.appendChild(el('h3', { text: 'Громкость' }));
   p.appendChild(slider('Музыка', S.mus, 0, 1, .05, v => { S.mus = v; if (ac) applyMus(.1); }));
   p.appendChild(slider('Звуки', S.sfx, 0, 1, .05, v => { S.sfx = v; applySnd(); }));
