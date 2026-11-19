@@ -2217,61 +2217,71 @@ function pick2(R, a) { return a[R() * a.length | 0]; }
 
 // Approved ComfyUI backgrounds. The original canvas-drawn worlds remain the fallback.
 const APPROVED_BG = {"meadow":{"land":{"night":"assets/backgrounds/meadow-land-test-night.png","day":"assets/backgrounds/meadow-land-test-day.png"},"port":{"night":"assets/backgrounds/meadow-port-2-night.png","day":"assets/backgrounds/meadow-port-2-day.png"}},"garden":{"land":{"night":"assets/backgrounds/garden-land-2-night.png","day":"assets/backgrounds/garden-land-2-day.png"},"port":{"night":"assets/backgrounds/garden-port-2-night.png","day":"assets/backgrounds/garden-port-2-day.png"}},"kitchen":{"land":{"night":"assets/backgrounds/kitchen-land-2-night.png","day":"assets/backgrounds/kitchen-land-2-day.png"},"port":{"night":"assets/backgrounds/kitchen-port-2-night.png","day":"assets/backgrounds/kitchen-port-2-day.png"}},"room":{"land":{"night":"assets/backgrounds/room-land-2-night.png","day":"assets/backgrounds/room-land-2-day.png"},"port":{"night":"assets/backgrounds/room-port-2-night.png","day":"assets/backgrounds/room-port-2-day.png"}},"stage":{"land":{"day":"assets/backgrounds/stage-land-2-day.png","night":"assets/backgrounds/stage-land-night-night.png"},"port":{"night":"assets/backgrounds/stage-port-night-night.png","day":"assets/backgrounds/stage-port-2-day.png"}},"home":{"land":{"night":"assets/backgrounds/home-land-2-night.png","day":"assets/backgrounds/home-land-2-day.png"},"port":{"night":"assets/backgrounds/home-port-1-night.png","day":"assets/backgrounds/home-port-1-day.png"}},"road":{"land":{"day":"assets/backgrounds/road-land-1-day.png","night":"assets/backgrounds/road-land-1-night.png"},"port":{"day":"assets/backgrounds/road-port-1-day.png","night":"assets/backgrounds/road-port-1-night.png"}},"sea":{"land":{"night":"assets/backgrounds/sea-land-2-night.png","day":"assets/backgrounds/sea-land-2-day.png"},"port":{"night":"assets/backgrounds/sea-port-1-night.png","day":"assets/backgrounds/sea-port-1-day.png"}},"studio":{"land":{"day":"assets/backgrounds/studio-land-2-day.png","night":"assets/backgrounds/studio-land-2-night.png"},"port":{"day":"assets/backgrounds/studio-port-1-day.png","night":"assets/backgrounds/studio-port-1-night.png"}}};
-const APPROVED_BG_CACHE = Object.create(null);
-function drawApprovedBackground(ctx, world, isNight, layout) {
-  const mode = isNight ? 'night' : 'day';
-  const path = APPROVED_BG[world]?.[layout]?.[mode];
-  if (!path) return false;
-  let image = APPROVED_BG_CACHE[path];
-  if (!image) {
-    image = new Image();
-    APPROVED_BG_CACHE[path] = image;
-    image.onload = () => {
-      if (MODES[md]?.world === world && night === isNight && (W >= H ? 'land' : 'port') === layout) buildWorld();
-    };
-    image.src = path;
-  }
-  if (!image.complete || !image.naturalWidth) return false;
-  ctx.drawImage(image, 0, 0, W, H);
-  return true;
-}
+const sceneImages = new Map();
+let pendingMode = null;
+let paintedScene = null;
 
+function scenePath(i) {
+  return APPROVED_BG[MODES[i].world][W >= H ? 'land' : 'port'][night ? 'night' : 'day'];
+}
+function loadScene(path, retry = true) {
+  if (sceneImages.has(path)) return sceneImages.get(path);
+  const image = new Image();
+  sceneImages.set(path, image);
+  image.onload = () => {
+    if (path === scenePath(pendingMode ?? md)) buildWorld();
+  };
+  image.onerror = () => {
+    sceneImages.delete(path);
+    if (path !== scenePath(pendingMode ?? md)) return;
+    if (retry) {
+      setTimeout(() => {
+        if (path === scenePath(pendingMode ?? md)) loadScene(path, false);
+      }, 600);
+    } else if (paintedScene) {
+      pendingMode = null;
+    } else {
+      // Keep first launch playable if this device is offline without a cached scene.
+      bgC.width = cv.width;
+      bgC.height = cv.height;
+      bg.fillStyle = night ? '#1a2556' : '#cdeeff';
+      bg.fillRect(0, 0, bgC.width, bgC.height);
+      paintedScene = {mode: md, night};
+      pendingMode = null;
+    }
+  };
+  image.src = path;
+  return image;
+}
 function buildWorld() {
   if (!W) return;
-  bgC.width = cv.width; bgC.height = cv.height; bg.setTransform(DPR, 0, 0, DPR, 0, 0);
-  const md0 = MODES[md], w = md0.world;
-  WLIGHTS = []; FLOWERS = []; NFX = { wins: [], near: [], lamps: [], stars: [], notes: [] };
-  NEAR = null;
-  const artLayout = W >= H ? 'land' : 'port';
-  if (drawApprovedBackground(bg, w, night, artLayout)) {
-    const pageColor = night ? (w === 'sea' ? '#0b2a55' : '#1a2556') : ({ meadow: '#b8e2ff', garden: '#cdeeff', room: '#ffe9f2', kitchen: '#fff3d9', road: '#c3e6ff', sea: '#8fe3ff', studio: '#fffaf0', stage: '#ffe9c7', home: '#eaf5ff' })[w];
-    document.body.style.background = pageColor;
-    const pageTheme = document.querySelector('meta[name=theme-color]'); if (pageTheme) pageTheme.content = pageColor;
-    return;
+  const nextMode = pendingMode ?? md;
+  const path = scenePath(nextMode);
+  const image = loadScene(path);
+  if (!image.complete || !image.naturalWidth) return;
+
+  const switchingRoom = nextMode !== md;
+  if (switchingRoom) fadeA = 0;
+  else if (paintedScene && paintedScene.mode === md && paintedScene.night !== night) {
+    fadeC.width = bgC.width;
+    fadeC.height = bgC.height;
+    fadeC.getContext('2d').drawImage(bgC, 0, 0);
+    fadeA = 1;
   }
-  if (night && w === 'road') { nearC.width = bgC.width; nearC.height = bgC.height; NEAR = nearC.getContext('2d'); NEAR.setTransform(DPR, 0, 0, DPR, 0, 0); }
-  WORLD[w](bg);
-  const nx = NEAR || bg;
-  if (DECOR[w]) { nx.save(); DECOR[w](nx); nx.restore(); }
-  calm(bg);
-  if (night) {
-    const ov = w === 'sea' ? 'rgba(5,15,55,.55)' : 'rgba(16,24,72,.6)';
-    bg.fillStyle = ov; bg.fillRect(0, 0, W, H);
-    if (md0.out) moonDraw(bg, W * .8, H * .2, M * .055);
-    farWindows(bg);
-    if (NEAR) {
-      const pre = NFX.near.map(r => litGrab(NEAR, r));
-      NEAR.globalCompositeOperation = 'source-atop'; calm(NEAR); NEAR.fillStyle = ov; NEAR.fillRect(0, 0, W, H); NEAR.globalCompositeOperation = 'source-over';
-      pre.forEach(p => litPut(NEAR, p));
-      bg.setTransform(1, 0, 0, 1, 0, 0); bg.drawImage(nearC, 0, 0); bg.setTransform(DPR, 0, 0, DPR, 0, 0);
-    }
-    windowLights(bg);
-    nightLights(bg);
-  }
-  const top = night ? (w === 'sea' ? '#0b2a55' : '#1a2556') : ({ meadow: '#b8e2ff', garden: '#cdeeff', room: '#ffe9f2', kitchen: '#fff3d9', road: '#c3e6ff', sea: '#8fe3ff', studio: '#fffaf0', stage: '#ffe9c7', home: '#eaf5ff' })[w];
-  document.body.style.background = top;
-  const tc = document.querySelector('meta[name=theme-color]'); if (tc) tc.content = top;
+  bgC.width = cv.width;
+  bgC.height = cv.height;
+  bg.setTransform(DPR, 0, 0, DPR, 0, 0);
+  bg.drawImage(image, 0, 0, W, H);
+  paintedScene = {mode: nextMode, night};
+  const w = MODES[nextMode].world;
+  const color = night ? (w === 'sea' ? '#0b2a55' : '#1a2556') : ({ meadow: '#b8e2ff', garden: '#cdeeff', room: '#ffe9f2', kitchen: '#fff3d9', road: '#c3e6ff', sea: '#8fe3ff', studio: '#fffaf0', stage: '#ffe9c7', home: '#eaf5ff' })[w];
+  document.body.style.background = color;
+  const theme = document.querySelector('meta[name=theme-color]');
+  if (theme) theme.content = color;
+  pendingMode = null;
+  if (switchingRoom) enterMode(nextMode);
 }
+addEventListener('online', buildWorld);
 // живые детали мира
 const NS = Array.from({ length: 45 }, () => ({ x: Math.random(), y: Math.random() * .6, r: .8 + Math.random() * 1.8, ph: Math.random() * 6.28 }));
 const WEED = Array.from({ length: 7 }, (_, i) => ({ x: (i + .3 + Math.random() * .4) / 7, h: .12 + Math.random() * .12, ph: Math.random() * 6, c: pick(['#3fbf7f', '#2fa36b', '#5ad19a']), w: 5 + Math.random() * 4 }));
@@ -2834,6 +2844,8 @@ function renderModes() {
     const b = document.createElement('button'); b.className = 'tb' + (k === md ? ' on' : ''); b.innerHTML = '<i>' + m.ic + '</i><span>' + m.sh + '</span>'; b.setAttribute('aria-label', m.name);
     if (!S.modes[k]) b.style.display = 'none';
     b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); audio(); closeModes(); setMode(k); });
+    b.addEventListener('pointerenter', () => loadScene(scenePath(k)));
+    b.addEventListener('focus', () => loadScene(scenePath(k)));
     grid.appendChild(b); mb.push(b);
   });
   mpop.appendChild(grid);
@@ -2848,18 +2860,22 @@ function openModes() {
 function closeModes() { clearTimeout(popT); mpop.classList.remove('on'); }
 holdBtn(mbtn, openModes, 300, () => S.hold);
 function setMode(i) {
-  if (i === md) return;
+  if (i === md) { pendingMode = null; buildWorld(); return; }
+  if (i === pendingMode) return;
   VKAD.brk();
+  pendingMode = i;
+  buildWorld();
+}
+function enterMode(i) {
   md = i; lastIdx = -1;
   mb.forEach((q, k) => q.classList.toggle('on', k === i)); updMbtn();
-  buildWorld(); placeActors();
+  placeActors();
   for (const b of bubbles) { if (b.type === 'rain') continue; const idx = nextItem(); b.it = items()[idx]; if (isCol(md)) b.ci = colCi(idx); skin(b); }
   if (started) { loadVoice('g' + i); if (gm === 'find') { gTok++; F2.tgt = null; renderHud(); sayK('mo' + i, () => later(newTarget, 200)); } else sayK('mo' + i); }
 }
 const fadeC = document.createElement('canvas'); let fadeA = 0;
 function setNight(v) {
   if (night === v) { buildWorld(); return; }
-  if (W && bgC.width) { fadeC.width = bgC.width; fadeC.height = bgC.height; fadeC.getContext('2d').drawImage(bgC, 0, 0); fadeA = 1; }
   night = v; buildWorld(); applyMus(.6); if (ac) { nextBarT = ac.currentTime + .4; }
   $('dn').textContent = v ? '☀️' : '🌙';
   if (mus) mus.padF.frequency.setTargetAtTime(v ? 520 : 800, ac.currentTime, .5);
@@ -3074,6 +3090,7 @@ function loop(t) {
 function frame(t) {
   const k = Math.min((t - t0) / 16.67, 3), dt = k / 60; t0 = t;
   windX *= Math.pow(.96, k); tiltX += (tiltRaw - tiltX) * .1 * k;
+  if (!paintedScene) return;
   ctx.drawImage(bgC, 0, 0, W, H);
   if (fadeA > 0) { ctx.globalAlpha = fadeA; ctx.drawImage(fadeC, 0, 0, W, H); ctx.globalAlpha = 1; fadeA -= .025 * k; }
   worldLive(t, k);
