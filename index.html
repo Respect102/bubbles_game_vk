@@ -821,6 +821,16 @@ function speakItem(it, extraAfter) {
 const BR = { rasp: ['#ff7aa0', '#c2185b'], bkb: ['#a77bd0', '#2e1646'], red: ['#ff7b7b', '#c4162e'], blk: ['#7a5a9a', '#1d1030'], cran: ['#ec5068', '#a00f2b'], blue: ['#8a9cf0', '#2f3f9e'], goose: ['#e8f7a8', '#76a832'] };
 const ANIMAL_IMAGE = new Map(A.map((a, i) => [a[0], 'assets/animals/animal-' + String(i + 1).padStart(2, '0') + '.png']));
 const ANIMAL_IMAGES = new Map();
+function preloadAnimalImages() {
+  return Promise.all(Array.from(ANIMAL_IMAGE.values(), src => new Promise(resolve => {
+    let image = ANIMAL_IMAGES.get(src);
+    if (!image) { image = new Image(); ANIMAL_IMAGES.set(src, image); }
+    if (image.complete) { resolve(); return; }
+    image.onload = () => { objCache.clear(); gBox.clear(); resolve(); };
+    image.onerror = resolve;
+    if (!image.src) image.src = src;
+  })));
+}
 const CS = ['#e8262c', '#3fb4ff', '#3ecf8e', '#ffc83d', '#9b6bff', '#ff8a4c', '#2a5fd6', '#ff6fae', '#8a5226', '#26262e', '#cfd3dc', '#868d99'], LS = ['#ff9a9a', '#b8e4ff', '#b8f2d6', '#ffeaa8', '#d9c8ff', '#ffd1b5', '#a9c4ff', '#ffd0e6', '#d9a978', '#7a7a88', '#ffffff', '#d8dce3'];
 function bead(x, cx, cy, r, c) {
   const g = x.createRadialGradient(cx - r * .35, cy - r * .35, r * .1, cx, cy, r);
@@ -3220,7 +3230,7 @@ function frame(t) {
 
 // ---------- запуск ----------
 renderModes(); updMbtn(); resize(); autoNight(); loadXIndex(); 
-for (let i = 0; i < 4; i++) spawn(true);
+preloadAnimalImages().then(() => { for (let i = 0; i < 4; i++) spawn(true); });
 requestAnimationFrame(loop);
 $('dn').textContent = night ? '☀️' : '🌙';
 if (!IN_VK && 'serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
