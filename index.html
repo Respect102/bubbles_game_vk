@@ -223,7 +223,7 @@ function save() { try { localStorage.setItem('symphony9', JSON.stringify(S)); } 
 // =====================================================================
 //  ДАННЫЕ: [картинка, слово, звук, звукоподражание]
 // =====================================================================
-const A = [['🐶','Собачка','dog','гав-гав'],['🐱','Кошечка','cat','мяу'],['🐸','Лягушка','frog','ква-ква'],['🐷','Хрюшка','pig','хрю-хрю'],['🐮','Коровка','cow','му-у'],['🦆','Уточка','duck','кря-кря'],['🐔','Курочка','hen','ко-ко-ко'],['🐥','Цыплёнок','chick','пи-пи-пи'],['🐑','Овечка','sheep','бе-е'],['🐴','Лошадка','horse','и-го-го'],['🦁','Лев','lion','р-р-р'],['🐻','Мишка','bear','р-р'],['🐰','Зайка','bunny'],['🦊','Лисичка','fox','фыр-фыр-фыр'],['🦉','Совушка','owl','ух-ух'],['🐭','Мышка','mouse','пи-пи'],['🐝','Пчёлка','bee','ж-ж-ж'],['🐘','Слоник','ele','ту-ту'],['🐯','Тигр','tiger','р-р-р'],['🐵','Обезьянка','monkey','у-а-а'],['🐧','Пингвинчик','peng'],['🐓','Петушок','rooster','ку-ка-ре-ку'],['🐺','Волк','wolf','у-у-у'],['🦓','Зебра','zebra'],['🐢','Черепашка','-'],['🦒','Жираф','-'],['🦔','Ёжик','-'],['🐞','Божья коровка','-'],['🦋','Бабочка','-'],['🦌','Оленёнок','deer'],['🐐','Козочка','goat','ме-е'],['🐿️','Белочка','squirrel'],['🐹','Хомячок','hamster'],['🦜','Попугай','parrot','привет']];
+const A = [["assets/animals/animal-01.png","Собачка","dog","гав-гав"],["assets/animals/animal-02.png","Кошечка","cat","мяу"],["assets/animals/animal-03.png","Лягушка","frog","ква-ква"],["assets/animals/animal-04.png","Хрюшка","pig","хрю-хрю"],["assets/animals/animal-05.png","Коровка","cow","му-у"],["assets/animals/animal-06.png","Уточка","duck","кря-кря"],["assets/animals/animal-07.png","Курочка","hen","ко-ко-ко"],["assets/animals/animal-08.png","Цыплёнок","chick","пи-пи-пи"],["assets/animals/animal-09.png","Овечка","sheep","бе-е"],["assets/animals/animal-10.png","Лошадка","horse","и-го-го"],["assets/animals/animal-11.png","Лев","lion","р-р-р"],["assets/animals/animal-12.png","Мишка","bear","р-р"],["assets/animals/animal-13.png","Зайка","bunny"],["assets/animals/animal-14.png","Лисичка","fox","фыр-фыр-фыр"],["assets/animals/animal-15.png","Совушка","owl","ух-ух"],["assets/animals/animal-16.png","Мышка","mouse","пи-пи"],["assets/animals/animal-17.png","Пчёлка","bee","ж-ж-ж"],["assets/animals/animal-18.png","Слоник","ele","ту-ту"],["assets/animals/animal-19.png","Тигр","tiger","р-р-р"],["assets/animals/animal-20.png","Обезьянка","monkey","у-а-а"],["assets/animals/animal-21.png","Пингвинчик","peng"],["assets/animals/animal-22.png","Петушок","rooster","ку-ка-ре-ку"],["assets/animals/animal-23.png","Волк","wolf","у-у-у"],["assets/animals/animal-24.png","Зебра","zebra"],["assets/animals/animal-25.png","Черепашка","-"],["assets/animals/animal-26.png","Жираф","-"],["assets/animals/animal-27.png","Ёжик","-"],["assets/animals/animal-28.png","Божья коровка","-"],["assets/animals/animal-29.png","Бабочка","-"],["assets/animals/animal-30.png","Оленёнок","deer"],["assets/animals/animal-31.png","Козочка","goat","ме-е"],["assets/animals/animal-32.png","Белочка","squirrel"],["assets/animals/animal-33.png","Хомячок","hamster"],["assets/animals/animal-34.png","Попугай","parrot","привет"]];
 const F = [['🍎','Яблоко'],['🍌','Банан'],['🍊','Апельсин'],['🍐','Груша'],['🍓','Клубника'],['🍇','Виноград'],['🍉','Арбуз'],['🍑','Персик'],['🍍','Ананас'],['🥕','Морковка'],['🥦','Брокколи'],['🌽','Кукуруза'],['🍅','Помидор'],['🥒','Огурчик'],['🥔','Картошка'],['🍋','Лимон'],['🍒','Вишенка'],['🥝','Киви'],['🥭','Манго'],['~melon','Дыня'],['🥑','Авокадо'],['🍆','Баклажан'],['🥬','Капуста'],['🧅','Лук'],['🍄','Грибок'],['🥥','Кокос'],['🍏','Зелёное яблочко'],['~rasp','Малина'],['~bkb','Ежевика'],['~red','Красная смородина'],['~blk','Чёрная смородина'],['~goose','Крыжовник'],['~cran','Клюква'],['~blue','Черника']];
 const O = [['🧸','Мишка','squeak'],['⚽','Мячик','boing'],['🎈','Шарик','squeak'],['🪁','Воздушный змей','kite'],['🎁','Подарок','gift'],['🧩','Пазл','click'],['~carousel','Карусель','carousel'],['~cubes','Кубики','blocks'],['🤖','Робот','robot'],['🪆','Матрёшка','wood'],['🪀','Йо-йо','yoyo'],['🫧','Мыльные пузыри','bubbles'],['~top','Юла','top'],['~nev','Неваляшка','nev'],['~pyr','Пирамидка','blocks'],['~rattle','Погремушка','rattle'],['~pipe','Дудочка','m:recorder'],['~xylo','Ксилофон','m:marimba'],['🔔','Колокольчик','m:bells'],['~mbox','Музыкальная шкатулка','m:musicbox'],['~whistle','Свистулька','m:ocarina'],['🎳','Кегли'],['🛝','Горка'],['🛷','Санки'],['🪃','Бумеранг'],['🛼','Ролики'],['🪣','Ведёрко'],['🚙','Машинка']];
 const MU = [['🎸','Гитара','m:guitar'],['🎹','Пианино','m:piano'],['🎻','Скрипка','m:violin'],['🥁','Барабан','drum'],['🎺','Труба','m:trumpet'],['~flute','Флейта','m:flute'],['~harp','Арфа','m:harp'],['~tamb','Бубен','tambourine'],['~tri','Треугольник','triangle'],['~mara','Маракасы','maracas'],['🪗','Гармошка','m:accordion'],['🎷','Саксофон','m:sax'],['🪕','Банджо','m:banjo'],['~balal','Балалайка','m:balalaika'],['~harmonica','Губная гармошка','m:harmonica']];
@@ -833,7 +833,17 @@ function face(x, u, ey) {
   x.beginPath(); x.arc(0, ey + u * .08, u * .12, .3, Math.PI - .3); x.stroke();
 }
 function glyph(x, e, cx, cy, s) {
-  if (e[0] !== '~') { x.font = s + 'px ' + EF; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = '#000'; x.fillText(e, cx, cy); return; }
+  const ANIMAL_IMAGE = new Map(A.map(a => [a[2], a[0]]));
+  const ANIMAL_IMAGES = new Map();
+  if (e[0] !== '~') {
+    const src = ANIMAL_IMAGE.get(e);
+    if (src) {
+      let image = ANIMAL_IMAGES.get(src);
+      if (!image) { image = new Image(); ANIMAL_IMAGES.set(src, image); image.onload = () => objCache.clear(); image.src = src; }
+      if (image.complete && image.naturalWidth) { const side = s * 1.35; x.drawImage(image, cx-side/2, cy-side/2, side, side); return; }
+    }
+    x.font = s + 'px ' + EF; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = '#000'; x.fillText(e, cx, cy); return;
+  }
   const k = e.slice(1), u = s / 2, c = BR[k];
   x.save(); x.translate(cx, cy);
   if (TOY[k]) { TOY[k](x, u); }
@@ -3217,3 +3227,4 @@ if (!IN_VK && 'serviceWorker' in navigator && location.protocol === 'https:') na
 </script>
 </body>
 </html>
+
