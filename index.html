@@ -825,8 +825,12 @@ function preloadAnimalImages() {
   return Promise.all(Array.from(ANIMAL_IMAGE.values(), src => new Promise(resolve => {
     let image = ANIMAL_IMAGES.get(src);
     if (!image) { image = new Image(); ANIMAL_IMAGES.set(src, image); }
-    if (image.complete) { resolve(); return; }
-    image.onload = () => { objCache.clear(); gBox.clear(); resolve(); };
+    if (image.complete && image.naturalWidth > 0) { resolve(); return; }
+    image.onload = () => {
+      objCache.clear(); gBox.clear();
+      if (typeof bubbles !== 'undefined') for (const b of bubbles) skin(b);
+      resolve();
+    };
     image.onerror = resolve;
     if (!image.src) image.src = src;
   })));
