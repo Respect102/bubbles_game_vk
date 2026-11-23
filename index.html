@@ -194,40 +194,57 @@ html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;backgr
 // ВКонтакте: сообщаем платформе, что игра запустилась (нужно в первые 30 секунд)
 const IN_VK = /[?&]vk_app_id=/.test(location.search);
 if (window.vkBridge) try { vkBridge.send('VKWebAppInit').catch(() => {}); } catch (e) {}
-// Реклама VK открывается по отдельной кнопке в разделе для родителей.
+// Один запрос на паузу для обоих рекламных поводов.
 const VKAD = (() => {
   const params = { ad_format: 'interstitial' };
-  const gap = 180000;
-  let lastShown = 0, busy = false;
-  async function support() {
-    if (!IN_VK || !window.vkBridge) return 'Откройте игру внутри ВКонтакте.';
-    if (busy) return 'Рекламный показ уже запрошен.';
-    if (Date.now() - lastShown < gap) return 'Следующий показ можно открыть через несколько минут.';
+  const playInterval = 300, showGap = 180000, checkGap = 60000;
+  let playSeconds = 0, transitions = 0, pending = false;
+  let lastShown = -Infinity, lastCheck = -Infinity, busy = false, showing = false;
+  async function atBreak(stillAtBreak = canShowVkAd) {
+    if (!IN_VK || !window.vkBridge || !pending || busy || !stillAtBreak()) return;
+    const now = Date.now();
+    if (now - lastShown < showGap || now - lastCheck < checkGap) return;
     busy = true;
-    let paused = false, timeout;
+    lastCheck = now;
+    let timeout;
     try {
       const availability = await Promise.race([
         vkBridge.send('VKWebAppCheckNativeAds', params),
-        new Promise(resolve => { timeout = setTimeout(() => resolve(null), 8000); }),
+        new Promise(resolve => { timeout = setTimeout(() => resolve(null), 2500); }),
       ]);
-      if (!availability?.result) return 'Сейчас VK не предложил рекламу. Игру можно продолжить.';
-      paused = true;
+      if (!stillAtBreak()) return;
+      pending = false;
+      playSeconds = 0;
+      if (!availability?.result) return;
+      showing = true;
       appHidden(true);
       const result = await vkBridge.send('VKWebAppShowNativeAds', params);
-      if (!result?.result) return 'Показ не завершился.';
-      lastShown = Date.now();
-      return 'Спасибо за поддержку!';
+      if (result?.result) lastShown = Date.now();
     } catch {
-      return 'Не удалось открыть рекламу VK. Игру можно продолжить.';
+      // На следующей подходящей паузе можно повторить проверку.
     } finally {
       clearTimeout(timeout);
       busy = false;
-      if (paused && !document.hidden) appHidden(false);
+      if (showing) {
+        showing = false;
+        appHidden(document.hidden || vkViewHidden);
+      }
     }
+  }
+  function transition() {
+    if (!IN_VK || !started) return;
+    if (++transitions % 3 === 0) pending = true;
+    const touch = lastTouch;
+    void atBreak(() => canShowVkAd() && lastTouch === touch);
+  }
+  function tick(active) {
+    if (!IN_VK || showing) return;
+    if (active && ++playSeconds >= playInterval) pending = true;
+    if (active && isQuietVkBreak()) void atBreak(isQuietVkBreak);
   }
   const share = () => IN_VK && window.vkBridge ? vkBridge.send('VKWebAppShare', { link: 'https://vk.com/app54879179' }).catch(() => {}) : null;
   const invite = () => IN_VK && window.vkBridge ? vkBridge.send('VKWebAppShowInviteBox').catch(() => {}) : null;
-  return { support, share, invite };
+  return { transition, tick, atBreak, paused: () => showing, share, invite };
 })();
 </script>
 <script>
@@ -2615,10 +2632,15 @@ function roundDone() {
   fanfare(); fireworks(W / 2, H * .4); setMascot('cheer', 3.5);
   sayK('rdone', () => later(() => sayK(pick(['pr0', 'pr3', 'pr4'])), 200));
   bubbles.slice().forEach((q, i) => pop(q, { quiet: true, arp: i }));
-  later(() => startRound(C.round + 1), 4600);
+  later(async () => {
+    const token = gTok;
+    await VKAD.atBreak(() => canShowVkAd() && token === gTok && C.state === 'done');
+    if (token === gTok) startRound(C.round + 1);
+  }, 4600);
 }
 // ----- переключение способа игры -----
 function setGame(g, silent) {
+  const changed = g !== gm;
   gTok++; gm = g; S.gm = g; save();
   for (const b of bubbles) flashes.push({ x: b.x, y: b.y, r: b.r, a: .3 });
   bubbles.length = 0; hand = null; F2.tgt = null; banner = null; C.state = 'off';
@@ -2630,6 +2652,7 @@ function setGame(g, silent) {
     else if (!silent) sayK('learn');
   }
   renderHud(); updMbtn();
+  if (changed && !silent) VKAD.transition();
 }
 // ----- табло сверху -----
 const hudEl = $('hud');
@@ -2837,7 +2860,7 @@ function endBlow(id) {
   } else tone([1200, 1600], .08, { type: 'sine', v: .05 });
 }
 cv.addEventListener('pointerdown', e => {
-  e.preventDefault(); if (!started) return;
+  e.preventDefault(); if (!started || VKAD.paused()) return;
   audio(); wake(); touched();
   downs.set(e.pointerId, { x0: e.clientX, y0: e.clientY, t0: now(), lx: e.clientX, ly: e.clientY, mode: 'tap' });
   if (downs.size >= 4 && gm === 'learn') { mega(); return; }
@@ -2966,6 +2989,7 @@ function enterMode(i) {
   placeActors();
   for (const b of bubbles) { if (b.type === 'rain' || b.type === 'life') continue; const idx = nextItem(); b.it = items()[idx]; b.ci = isCol(md) ? colCi(idx) : b.ci % 6; skin(b); }
   if (started) { loadVoice('g' + i); if (gm === 'find') { gTok++; F2.tgt = null; renderHud(); sayK('mo' + i, () => later(newTarget, 200)); } else sayK('mo' + i); }
+  VKAD.transition();
 }
 const fadeC = document.createElement('canvas'); let fadeA = 0;
 function setNight(v) {
@@ -3020,15 +3044,6 @@ function renderPanel() {
   p.appendChild(el('h2', {}, [el('span', { text: 'Для родителей' }), close]));
   const gb = el('button', { class: 'pbig', text: '🫧 Все шарики: посмотреть и послушать' }); gb.addEventListener('click', () => { closePanel(); openGallery(md); }); p.appendChild(gb);
   if (IN_VK) {
-    const support = el('button', { class: 'pbig', text: 'Поддержать игру просмотром рекламы VK' });
-    const adStatus = el('p', { role: 'status', class: 'foot' });
-    support.addEventListener('click', async () => {
-      support.disabled = true;
-      adStatus.textContent = 'Проверяем, доступна ли реклама…';
-      adStatus.textContent = await VKAD.support();
-      support.disabled = false;
-    });
-    p.append(support, adStatus);
     const sh = el('button', { class: 'pbig', text: '📣 Рассказать друзьям об игре' }); sh.addEventListener('click', () => VKAD.share()); p.appendChild(sh);
     const iv = el('button', { class: 'pbig', text: '👋 Пригласить друзей' }); iv.addEventListener('click', () => VKAD.invite()); p.appendChild(iv);
   }
@@ -3095,6 +3110,16 @@ function renderGallery(m) {
 }
 // отдых
 holdBtn($('more'), () => { rested = false; activeSec = 0; $('rest').classList.remove('on'); applyMus(1.5); touched(); });
+function canShowVkAd() {
+  return started && !document.hidden && !vkViewHidden && !rested && !panelOpen && !galOpen &&
+    !mpop.classList.contains('on') && !downs.size && !blows.size;
+}
+function isQuietVkBreak() {
+  return canShowVkAd() && (gm === 'learn' || (gm === 'find' && F2.ok)) &&
+    !curClip && now() - lastTouch > 2200;
+}
+setInterval(() => VKAD.tick(started && !document.hidden && !vkViewHidden && !rested &&
+  !panelOpen && !galOpen && !mpop.classList.contains('on') && now() - lastTouch < 60000), 1000);
 setInterval(() => {
   if (!started || document.hidden || rested) return;
   if (now() - lastTouch < 60000) activeSec++;
@@ -3113,9 +3138,16 @@ function appHidden(h) {
   if (h) { ac.suspend(); if (silentEl) silentEl.pause(); }
   else { ac.resume(); if (silentEl && started) silentEl.play().catch(() => {}); wake(); nextBarT = 0; }
 }
-document.addEventListener('visibilitychange', () => appHidden(document.hidden));
+let vkViewHidden = false;
+document.addEventListener('visibilitychange', () => appHidden(document.hidden || vkViewHidden || VKAD.paused()));
 // ВКонтакте: приложение свернули или вернули — выключаем и включаем звук
-if (window.vkBridge) vkBridge.subscribe(e => { const t = e && e.detail && e.detail.type; if (t === 'VKWebAppViewHide') appHidden(true); else if (t === 'VKWebAppViewRestore') appHidden(false); });
+if (window.vkBridge) vkBridge.subscribe(e => {
+  const t = e?.detail?.type;
+  if (t === 'VKWebAppViewHide') vkViewHidden = true;
+  else if (t === 'VKWebAppViewRestore') vkViewHidden = false;
+  else return;
+  appHidden(document.hidden || vkViewHidden || VKAD.paused());
+});
 // старт
 $('go').addEventListener('click', e => {
   e.preventDefault(); if (started) return; audio(); unlockIOS(); wake(); loadAnim(); if (!XV) loadXIndex(); loadVoice('gx'); loadVoice('g' + md);
@@ -3196,6 +3228,7 @@ function loop(t) {
 }
 function frame(t) {
   const k = Math.min((t - t0) / 16.67, 3), dt = k / 60; t0 = t;
+  if (VKAD.paused()) return;
   windX *= Math.pow(.96, k); tiltX += (tiltRaw - tiltX) * .1 * k;
   if (!paintedScene) return;
   ctx.drawImage(bgC, 0, 0, W, H);
