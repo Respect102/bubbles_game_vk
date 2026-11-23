@@ -87,16 +87,31 @@ html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;backgr
 .ov{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px}
 .ov.on{display:flex}
 #start,#start *{touch-action:pan-y}
-#start{background:radial-gradient(circle at 18% 22%,rgba(255,255,255,.9) 0 34px,rgba(255,255,255,0) 35px),radial-gradient(circle at 30% 18%,rgba(255,255,255,.85) 0 26px,rgba(255,255,255,0) 27px),radial-gradient(circle at 80% 12%,rgba(255,255,255,.8) 0 30px,rgba(255,255,255,0) 31px),radial-gradient(circle at 90% 16%,rgba(255,255,255,.75) 0 22px,rgba(255,255,255,0) 23px),radial-gradient(circle at 12% 80%,rgba(255,255,255,.35) 0 38px,rgba(180,140,255,.25) 39px,rgba(255,255,255,0) 41px),radial-gradient(circle at 86% 72%,rgba(255,255,255,.35) 0 52px,rgba(255,160,190,.3) 53px,rgba(255,255,255,0) 55px),radial-gradient(circle at 70% 90%,rgba(255,255,255,.35) 0 24px,rgba(140,220,255,.35) 25px,rgba(255,255,255,0) 27px),linear-gradient(180deg,#8fd0ff 0%,#c9e9ff 45%,#ffe3f0 100%);padding:16px;overflow-y:auto}
-#wel{width:min(440px,100%);margin:auto;background:linear-gradient(180deg,#ffffff 0%,#fbf8ff 100%);border:3px solid rgba(255,255,255,.9);border-radius:34px;padding:24px 20px 20px;box-shadow:0 18px 44px rgba(70,80,160,.28);display:flex;flex-direction:column;align-items:center;gap:14px}
-#wel .ttl{display:flex;flex-direction:column;align-items:center;gap:4px}
-#wel .blob{font-size:64px;line-height:1;animation:breathe 2.4s ease-in-out infinite;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
-#wel h1{font-size:30px;font-weight:900;color:#5a46c8;letter-spacing:.3px;text-align:center;line-height:1.1}
-#wel .how{list-style:none;display:flex;flex-direction:column;gap:9px;width:100%;padding:0}
-#wel .how li{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:18px;background:#f3efff;font-size:16.5px;font-weight:600;line-height:1.3;color:#34405a}
-#wel .how li:nth-child(2){background:#eaf6ff}#wel .how li:nth-child(3){background:#fff1f5}#wel .how li:nth-child(4){background:#eefaf0}#wel .how li:nth-child(5){background:#fff7e6}
-#wel .how b{flex:none;min-width:46px;text-align:center;font-size:24px;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;letter-spacing:-2px}
-#go{width:100%;height:64px;border:0;border-radius:32px;background:linear-gradient(90deg,#ff7f9a,#ffb36b);color:#fff;font:900 26px 'Nunito',-apple-system,'Segoe UI',Roboto,sans-serif;box-shadow:0 8px 20px rgba(255,127,154,.4);animation:breathe 2.4s ease-in-out infinite;cursor:pointer}
+#start{background:#a8d9ef url('assets/backgrounds/meadow-land-test-day.png') center/cover no-repeat;justify-content:flex-start;overflow:auto;padding:24px;color:#273e34}
+#wel{width:min(960px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,440px) 1fr;align-items:center;gap:clamp(24px,5vw,76px)}
+.welcome-card{padding:clamp(20px,4vw,34px);border:2px solid #fff9e6;border-radius:32px;background:#fffaf0;box-shadow:0 15px 42px #203b5550}
+#wel h1{margin:0 0 12px;color:#304f3b;font-size:clamp(34px,5vw,56px);font-weight:900;line-height:1.02;letter-spacing:-.025em}
+.welcome-intro{margin:0 0 18px;font-size:clamp(16px,2vw,20px);line-height:1.4}
+#go{width:100%;min-height:58px;padding:10px 20px;border:2px solid #fff4b9;border-radius:22px;background:#ffd879;color:#46361e;font:900 25px 'Nunito',-apple-system,'Segoe UI',sans-serif;box-shadow:0 5px 0 #b96a34;cursor:pointer}
+#go:active{transform:translateY(3px);box-shadow:0 2px 0 #b96a34}
+#go:focus-visible,.welcome-help summary:focus-visible{outline:3px solid #3c7958;outline-offset:4px}
+.welcome-help{margin-top:18px;font-size:15px;color:#405648}
+.welcome-help summary{cursor:pointer;width:fit-content;font-weight:800}
+.welcome-help ol{margin:10px 0 0;padding-left:22px;line-height:1.45}
+.welcome-art{position:relative;isolation:isolate;width:100%;max-width:430px;aspect-ratio:1;margin:auto;pointer-events:none}
+.welcome-bubble{position:absolute;display:grid;place-items:center;border-radius:50%;border:2px solid #fff9e1;background:radial-gradient(circle at 32% 25%,#fff8 0 9%,transparent 32%),radial-gradient(circle at 75% 77%,#ffd597aa,transparent 57%),linear-gradient(145deg,#a1f3e69e,#d4abf083 58%,#fff7a87a);box-shadow:inset 0 0 0 4px #fff4,0 10px 25px #264b582b}
+.welcome-bubble::after{content:"";position:absolute;left:15%;top:13%;width:29%;height:14%;border-top:5px solid #fff9;border-radius:50%;transform:rotate(-35deg)}
+.welcome-bubble img{width:91%;height:91%;object-fit:contain}
+.welcome-bubble.dog{width:63%;height:63%;top:18%;left:14%;z-index:1}
+.welcome-bubble.berry{width:34%;height:34%;top:1%;right:0}
+.welcome-bubble.chick{width:36%;height:36%;right:1%;bottom:1%;z-index:2}
+@media (max-width:700px),(max-aspect-ratio:1/1){
+  #start{background-image:url('assets/backgrounds/meadow-port-2-day.png');padding:clamp(12px,4vw,24px)}
+  #wel{max-width:420px;grid-template-columns:minmax(0,1fr);gap:8px}
+  .welcome-art{grid-row:1;max-width:min(250px,33dvh)}
+  #wel h1{font-size:clamp(31px,9vw,45px)}
+}
+@media (max-height:490px) and (orientation:landscape){#wel{gap:14px}.welcome-art{max-width:55dvh}.welcome-card{padding:16px}.welcome-intro{margin-bottom:12px}}
 @keyframes breathe{50%{transform:scale(1.04)}}
 #rest{background:rgba(15,27,64,.88);color:#fff;font-size:28px;font-weight:700}
 #rest .big{font-size:96px;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
@@ -151,15 +166,25 @@ html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;backgr
 <div id="mpop"></div>
 <div id="hint"></div>
 <div class="ov on" id="start"><div id="wel">
-  <div class="ttl"><span class="blob">🫧</span><h1>Музыкальные пузыри</h1></div>
-  <ul class="how">
-    <li><b>👆</b><span>Нажми на шарик — узнаешь, кто внутри</span></li>
-    <li><b>✋</b><span>Держи палец на пустом месте — выдуешь пузырь</span></li>
-    <li><b>📖🔍🎯</b><span>Сверху — как играть: учим, ищем, ловим</span></li>
-    <li><b>🐶🍎</b><span>Внизу — темы: звери, еда, машины…</span></li>
-    <li><b>⚙️</b><span>Для взрослых. Кнопки нажимаются долгим касанием</span></li>
-  </ul>
-  <button id="go">Начать</button>
+  <section class="welcome-card" aria-labelledby="welcome-title">
+    <h1 id="welcome-title">Музыкальные пузыри</h1>
+    <p class="welcome-intro">Лопай пузыри, узнавай, кто внутри, и слушай звуки.</p>
+    <button id="go">Начать</button>
+    <details class="welcome-help">
+      <summary>Как играть</summary>
+      <ol>
+        <li>Нажми на пузырь, чтобы услышать название и звук.</li>
+        <li>В режиме «Учим» подержи палец на пустом месте, чтобы выдуть пузырь.</li>
+        <li>Вверху выбери «Учим», «Ищем» или «Ловим». Внизу можно сменить тему.</li>
+        <li>Для настроек подержи кнопку с шестерёнкой.</li>
+      </ol>
+    </details>
+  </section>
+  <div class="welcome-art" aria-hidden="true">
+    <span class="welcome-bubble dog"><img src="assets/objects/animal-01.webp" alt=""></span>
+    <span class="welcome-bubble berry"><img src="assets/objects/garden-05.webp" alt=""></span>
+    <span class="welcome-bubble chick"><img src="assets/objects/animal-08.webp" alt=""></span>
+  </div>
 </div></div>
 <div class="ov" id="rest"><div class="big">😴</div><p>Пора отдохнуть</p><button class="btn" id="more">🎈 Играть ещё</button></div>
 <div class="ov" id="panel"><div id="pbox"></div></div>
@@ -169,27 +194,40 @@ html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;backgr
 // ВКонтакте: сообщаем платформе, что игра запустилась (нужно в первые 30 секунд)
 const IN_VK = /[?&]vk_app_id=/.test(location.search);
 if (window.vkBridge) try { vkBridge.send('VKWebAppInit').catch(() => {}); } catch (e) {}
-// ВКонтакте: межстраничная реклама только в паузах (смена темы или способа игры, конец раунда «Ловим»),
-// не раньше чем через 3 минуты после запуска и не чаще раза в 3 минуты
+// Реклама VK открывается по отдельной кнопке в разделе для родителей.
 const VKAD = (() => {
-  const GAP = 180000; let last = Date.now(), busy = false;
-  const ok = () => IN_VK && window.vkBridge && !busy && Date.now() - last >= GAP;
-  async function brk() {
-    if (!ok()) return false;
+  const params = { ad_format: 'interstitial' };
+  const gap = 180000;
+  let lastShown = 0, busy = false;
+  async function support() {
+    if (!IN_VK || !window.vkBridge) return 'Откройте игру внутри ВКонтакте.';
+    if (busy) return 'Рекламный показ уже запрошен.';
+    if (Date.now() - lastShown < gap) return 'Следующий показ можно открыть через несколько минут.';
     busy = true;
+    let paused = false, timeout;
     try {
-      const c = await vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
-      if (!c || !c.result) return false;
-      if (typeof appHidden === 'function') appHidden(true);
-      const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' });
-      if (r && r.result) { last = Date.now(); return true; }
-      return false;
-    } catch (e) { return false; }
-    finally { busy = false; if (typeof appHidden === 'function' && !document.hidden) appHidden(false); }
+      const availability = await Promise.race([
+        vkBridge.send('VKWebAppCheckNativeAds', params),
+        new Promise(resolve => { timeout = setTimeout(() => resolve(null), 8000); }),
+      ]);
+      if (!availability?.result) return 'Сейчас VK не предложил рекламу. Игру можно продолжить.';
+      paused = true;
+      appHidden(true);
+      const result = await vkBridge.send('VKWebAppShowNativeAds', params);
+      if (!result?.result) return 'Показ не завершился.';
+      lastShown = Date.now();
+      return 'Спасибо за поддержку!';
+    } catch {
+      return 'Не удалось открыть рекламу VK. Игру можно продолжить.';
+    } finally {
+      clearTimeout(timeout);
+      busy = false;
+      if (paused && !document.hidden) appHidden(false);
+    }
   }
   const share = () => IN_VK && window.vkBridge ? vkBridge.send('VKWebAppShare', { link: 'https://vk.com/app54879179' }).catch(() => {}) : null;
   const invite = () => IN_VK && window.vkBridge ? vkBridge.send('VKWebAppShowInviteBox').catch(() => {}) : null;
-  return { brk, share, invite };
+  return { support, share, invite };
 })();
 </script>
 <script>
@@ -383,7 +421,11 @@ const online = () => location.protocol !== 'file:';
 function loadAnim() { if (!online()) return; SNDF.forEach(k => fetch('snd/' + k + '.mp3').then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(ab => decode(ab, b => { buf[k] = b; })).catch(() => {})); }
 function animalSound(k) { const a = ANIM[k]; return !!(a && smp(pick(a.f), { rate: (a.r || 1) * rnd(.97, 1.03), v: a.v || 1 })); }
 // голос: фразы, озвученные заранее (папка voice), — работают одинаково на любом устройстве
-function loadVoice(g) { xwant[g] = 1; loadXPack(g); }
+function loadVoice(g) {
+  xwant[g] = 1;
+  loadXPack(g);
+  if (g === 'g4') loadVoice('g4extra');
+}
 // Сменный голос (например, Яндекс): voice/index.json + пачки mp3. Заменяется без пересборки игры.
 // index.json: { name, packs: { g0: 'y_g0.mp3', … }, clips: { ключ: [группа, начало_в_байтах, длина_в_байтах] } }
 let XV = null; const xbuf = {}, xload = {}, xwant = {};
@@ -835,7 +877,8 @@ for (const mode of MODES) {
   mode.d.forEach((item, index) => {
     const number = index + 1;
     if (mode.world === 'room' && ORIGINAL_TOYS.has(number)) return;
-    const src = 'assets/objects/' + prefix + '-' + String(number).padStart(2, '0') + '.webp';
+    const revision = mode.world === 'room' && number === 3 ? '?v=2' : '';
+    const src = 'assets/objects/' + prefix + '-' + String(number).padStart(2, '0') + '.webp' + revision;
     ITEM_ART.set(item, src);
     if (mode.world === 'meadow') ANIMAL_ART.set(item[0], src);
   });
@@ -2572,11 +2615,10 @@ function roundDone() {
   fanfare(); fireworks(W / 2, H * .4); setMascot('cheer', 3.5);
   sayK('rdone', () => later(() => sayK(pick(['pr0', 'pr3', 'pr4'])), 200));
   bubbles.slice().forEach((q, i) => pop(q, { quiet: true, arp: i }));
-  later(() => { const t = gTok; VKAD.brk().then(() => { if (t === gTok) startRound(C.round + 1); }); }, 4600);
+  later(() => startRound(C.round + 1), 4600);
 }
 // ----- переключение способа игры -----
 function setGame(g, silent) {
-  if (!silent) VKAD.brk();
   gTok++; gm = g; S.gm = g; save();
   for (const b of bubbles) flashes.push({ x: b.x, y: b.y, r: b.r, a: .3 });
   bubbles.length = 0; hand = null; F2.tgt = null; banner = null; C.state = 'off';
@@ -2915,7 +2957,6 @@ holdBtn(mbtn, openModes, 300, () => S.hold);
 function setMode(i) {
   if (i === md) { pendingMode = null; buildWorld(); return; }
   if (i === pendingMode) return;
-  VKAD.brk();
   pendingMode = i;
   buildWorld();
 }
@@ -2979,6 +3020,15 @@ function renderPanel() {
   p.appendChild(el('h2', {}, [el('span', { text: 'Для родителей' }), close]));
   const gb = el('button', { class: 'pbig', text: '🫧 Все шарики: посмотреть и послушать' }); gb.addEventListener('click', () => { closePanel(); openGallery(md); }); p.appendChild(gb);
   if (IN_VK) {
+    const support = el('button', { class: 'pbig', text: 'Поддержать игру просмотром рекламы VK' });
+    const adStatus = el('p', { role: 'status', class: 'foot' });
+    support.addEventListener('click', async () => {
+      support.disabled = true;
+      adStatus.textContent = 'Проверяем, доступна ли реклама…';
+      adStatus.textContent = await VKAD.support();
+      support.disabled = false;
+    });
+    p.append(support, adStatus);
     const sh = el('button', { class: 'pbig', text: '📣 Рассказать друзьям об игре' }); sh.addEventListener('click', () => VKAD.share()); p.appendChild(sh);
     const iv = el('button', { class: 'pbig', text: '👋 Пригласить друзей' }); iv.addEventListener('click', () => VKAD.invite()); p.appendChild(iv);
   }
