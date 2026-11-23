@@ -226,7 +226,8 @@ function save() { try { localStorage.setItem('symphony9', JSON.stringify(S)); } 
 const A = [['🐶','Собачка','dog','гав-гав'],['🐱','Кошечка','cat','мяу'],['🐸','Лягушка','frog','ква-ква'],['🐷','Хрюшка','pig','хрю-хрю'],['🐮','Коровка','cow','му-у'],['🦆','Уточка','duck','кря-кря'],['🐔','Курочка','hen','ко-ко-ко'],['🐥','Цыплёнок','chick','пи-пи-пи'],['🐑','Овечка','sheep','бе-е'],['🐴','Лошадка','horse','и-го-го'],['🦁','Лев','lion','р-р-р'],['🐻','Мишка','bear','р-р'],['🐰','Зайка','bunny'],['🦊','Лисичка','fox','фыр-фыр-фыр'],['🦉','Совушка','owl','ух-ух'],['🐭','Мышка','mouse','пи-пи'],['🐝','Пчёлка','bee','ж-ж-ж'],['🐘','Слоник','ele','ту-ту'],['🐯','Тигр','tiger','р-р-р'],['🐵','Обезьянка','monkey','у-а-а'],['🐧','Пингвинчик','peng'],['🐓','Петушок','rooster','ку-ка-ре-ку'],['🐺','Волк','wolf','у-у-у'],['🦓','Зебра','zebra'],['🐢','Черепашка','-'],['🦒','Жираф','-'],['🦔','Ёжик','-'],['🐞','Божья коровка','-'],['🦋','Бабочка','-'],['🦌','Оленёнок','deer'],['🐐','Козочка','goat','ме-е'],['🐿️','Белочка','squirrel'],['🐹','Хомячок','hamster'],['🦜','Попугай','parrot','привет']];
 const F = [['🍎','Яблоко'],['🍌','Банан'],['🍊','Апельсин'],['🍐','Груша'],['🍓','Клубника'],['🍇','Виноград'],['🍉','Арбуз'],['🍑','Персик'],['🍍','Ананас'],['🥕','Морковка'],['🥦','Брокколи'],['🌽','Кукуруза'],['🍅','Помидор'],['🥒','Огурчик'],['🥔','Картошка'],['🍋','Лимон'],['🍒','Вишенка'],['🥝','Киви'],['🥭','Манго'],['~melon','Дыня'],['🥑','Авокадо'],['🍆','Баклажан'],['🥬','Капуста'],['🧅','Лук'],['🍄','Грибок'],['🥥','Кокос'],['🍏','Зелёное яблочко'],['~rasp','Малина'],['~bkb','Ежевика'],['~red','Красная смородина'],['~blk','Чёрная смородина'],['~goose','Крыжовник'],['~cran','Клюква'],['~blue','Черника']];
 const O = [['🧸','Мишка','squeak'],['⚽','Мячик','boing'],['🎈','Шарик','squeak'],['🪁','Воздушный змей','kite'],['🎁','Подарок','gift'],['🧩','Пазл','click'],['~carousel','Карусель','carousel'],['~cubes','Кубики','blocks'],['🤖','Робот','robot'],['🪆','Матрёшка','wood'],['🪀','Йо-йо','yoyo'],['🫧','Мыльные пузыри','bubbles'],['~top','Юла','top'],['~nev','Неваляшка','nev'],['~pyr','Пирамидка','blocks'],['~rattle','Погремушка','rattle'],['~pipe','Дудочка','m:recorder'],['~xylo','Ксилофон','m:marimba'],['🔔','Колокольчик','m:bells'],['~mbox','Музыкальная шкатулка','m:musicbox'],['~whistle','Свистулька','m:ocarina'],['🎳','Кегли'],['🛝','Горка'],['🛷','Санки'],['🪃','Бумеранг'],['🛼','Ролики'],['🪣','Ведёрко'],['🚙','Машинка']];
-const MU = [['🎸','Гитара','m:guitar'],['🎹','Пианино','m:piano'],['🎻','Скрипка','m:violin'],['🥁','Барабан','drum'],['🎺','Труба','m:trumpet'],['~flute','Флейта','m:flute'],['~harp','Арфа','m:harp'],['~tamb','Бубен','tambourine'],['~tri','Треугольник','triangle'],['~mara','Маракасы','maracas'],['🪗','Гармошка','m:accordion'],['🎷','Саксофон','m:sax'],['🪕','Банджо','m:banjo'],['~balal','Балалайка','m:balalaika'],['~harmonica','Губная гармошка','m:harmonica']];
+const MU = [['🎸','Гитара','m:guitar'],['🎹','Пианино','m:piano'],['🎻','Скрипка','m:violin'],['🥁','Барабан','drum'],['🎺','Труба','m:trumpet'],['~flute','Флейта','m:flute'],['~harp','Арфа','m:harp'],['~tamb','Бубен','tambourine'],['~tri','Треугольник','triangle'],['~mara','Маракасы','maracas'],['🪗','Гармошка','m:accordion'],['🎷','Саксофон','m:sax'],['🪕','Банджо','m:banjo'],['~balal','Балалайка','m:balalaika'],['~harmonica','Губная гармошка','m:harmonica'],
+  ['🎺','Валторна','frenchHorn'],['🟤','Гонг','gong'],['🎶','Кларнет','clarinet'],['🥁','Тарелки','cymbals']];
 const TH = [['🛏️','Кроватка','bed'],['🪑','Стульчик','wood'],['🛁','Ванна','s:pour'],['🥄','Ложка','s:clink3'],['☕','Чашка','s:clink1'],['🍽️','Тарелка','s:clink2'],['🫖','Чайник','kettle'],['☂️','Зонтик','rain'],['🧦','Носочки','s:cloth'],['👟','Кроссовки','steps'],['🧢','Кепка','s:cloth'],['🧤','Варежки','s:cloth'],['👕','Футболка','s:cloth'],['🧥','Курточка','s:cloth'],['💡','Лампочка','lamp'],['🔑','Ключик','s:lock'],['⏰','Часы','clock'],['☎️','Телефон','phone'],['📱','Сотовый телефон','mobile'],['🚪','Дверь','s:door'],['✏️','Карандаш','s:quill'],['🖍️','Мелки','s:quill'],['📚','Книжки','s:page1'],['🎨','Краски','gift'],['🧼','Мыло','bubbles'],['🧹','Метёлка','broom'],['🪥','Зубная щётка','brush'],['🧺','Корзинка','wood'],['🛋️','Диван'],['🪞','Зеркало'],['🚿','Душ'],['🧽','Губка'],['🕯️','Свечка'],['🖼️','Картина'],['🪟','Окно'],['🍴','Вилка'],['🔦','Фонарик'],['📺','Телевизор']];
 const FD = [['🍞','Хлебушек'],['🥐','Круассан'],['~milk','Молоко'],['🧀','Сыр'],['🥚','Яичко'],['🍳','Яичница'],['🥞','Блинчики'],['🍪','Печенье'],['🧁','Кекс'],['🍩','Пончик'],['🍦','Мороженое'],['~honey','Мёд'],['~pasta','Макароны'],['🍕','Пицца'],['🥪','Бутерброд'],['🍲','Супчик'],['~porridge','Кашка'],['🧈','Масло'],['🥨','Крендель'],['🥧','Пирожок'],['🍫','Шоколадка'],['🥯','Бублик'],['🧃','Сок'],['🎂','Торт'],['🍬','Конфета'],['🍭','Леденец'],['🥟','Пельмени'],['🧇','Вафли'],['🍚','Рис'],['🥗','Салат'],['🍗','Куриная ножка']];
 const TR = [['🚗','Машина','horn'],['🚕','Такси','horn'],['🚌','Автобус','horn'],['🚓','Полицейская машина','siren'],['🚑','Скорая помощь','siren'],['🚒','Пожарная машина','siren'],['🚜','Трактор','engine'],['🚚','Грузовик','engine'],['🏎️','Гоночная машина','engine'],['🚲','Велосипед','ding'],['🛴','Самокат','ding'],['🚂','Паровозик','train'],['🚋','Трамвай','train'],['✈️','Самолёт','plane'],['🚁','Вертолёт','heli'],['🚀','Ракета','plane'],['~ship','Корабль','ship'],['⛵','Лодочка','ship'],['🚤','Катер','engine']];
@@ -542,6 +543,10 @@ const SX = {
   tambourine: () => [['tamb', 0], ['tamb', .25], ['shakeu', .4], ['tamb', .5], ['tamb', .75]].forEach(([k, t]) => { if (!smp(k, { t, v: 1.4 })) noise(.1, { ft: 'highpass', f0: 6000, v: .2, t }); }),
   maracas: () => { for (let i = 0; i < 8; i++) if (!smp(i % 2 ? 'shaked' : 'shakeu', { t: i * .14, v: 1.4 })) noise(.06, { ft: 'highpass', f0: 5000, v: .2, t: i * .14 }); },
   triangle: () => [0, .5].forEach(t => [[4186, .12], [5920, .06], [7458, .04]].forEach(([f, v]) => tone([f], 1.6, { type: 'sine', v, t }))),
+  frenchHorn: () => [220, 277, 330].forEach((f, i) => tone([f], .42, { type: 'sawtooth', ff: 950, v: .09, a: .08, t: i * .23 })),
+  gong: () => [98, 167, 245, 384, 611].forEach((f, i) => tone([f * 1.02, f], 1.8 - i * .19, { type: 'sine', v: .15 / (1 + i * .65) })),
+  clarinet: () => [294, 349, 440, 392].forEach((f, i) => tone([f], .26, { type: 'square', ff: 1250, v: .055, a: .04, t: i * .21 })),
+  cymbals: () => { noise(.75, { ft: 'highpass', f0: 4300, v: .24 }); noise(.34, { ft: 'bandpass', f0: 2200, q: 1, v: .09 }); },
   bed: () => { tone([520, 700, 300], 1, { type: 'sawtooth', ft: 'bandpass', ff: 900, q: 3, v: .08 }); [0, .6].forEach(t => tone([440, 330], .5, { type: 'sine', v: .08, t: t + 1 })); },
   kettle: () => tone([1800, 2400, 2350], 1.2, { type: 'sine', vf: 9, vd: 30, v: .09 }),
   rain: () => noise(1.4, { ft: 'lowpass', f0: 4500, v: .16, a: .3 }),
@@ -819,21 +824,40 @@ function speakItem(it, extraAfter) {
 //  ГРАФИКА: эмодзи и рисованные предметы, кэш картинок
 // =====================================================================
 const BR = { rasp: ['#ff7aa0', '#c2185b'], bkb: ['#a77bd0', '#2e1646'], red: ['#ff7b7b', '#c4162e'], blk: ['#7a5a9a', '#1d1030'], cran: ['#ec5068', '#a00f2b'], blue: ['#8a9cf0', '#2f3f9e'], goose: ['#e8f7a8', '#76a832'] };
-const ANIMAL_IMAGE = new Map(A.map((a, i) => [a[0], 'assets/animals/animal-' + String(i + 1).padStart(2, '0') + '.png']));
-const ANIMAL_IMAGES = new Map();
-function preloadAnimalImages() {
-  return Promise.all(Array.from(ANIMAL_IMAGE.values(), src => new Promise(resolve => {
-    let image = ANIMAL_IMAGES.get(src);
-    if (!image) { image = new Image(); ANIMAL_IMAGES.set(src, image); }
-    if (image.complete && image.naturalWidth > 0) { resolve(); return; }
-    image.onload = () => {
-      objCache.clear(); gBox.clear();
-      if (typeof bubbles !== 'undefined') for (const b of bubbles) skin(b);
-      resolve();
-    };
-    image.onerror = resolve;
-    if (!image.src) image.src = src;
-  })));
+const ITEM_ART = new WeakMap();
+const ANIMAL_ART = new Map();
+const ROOM_ART = new Map();
+const ROOM_ART_READY = new Set();
+const ITEM_ART_IMAGE = new Map();
+const ORIGINAL_TOYS = new Set([6, 8, 14, 20]);
+for (const mode of MODES) {
+  const prefix = mode.world === 'meadow' ? 'animal' : mode.world;
+  mode.d.forEach((item, index) => {
+    const number = index + 1;
+    if (mode.world === 'room' && ORIGINAL_TOYS.has(number)) return;
+    const src = 'assets/objects/' + prefix + '-' + String(number).padStart(2, '0') + '.webp';
+    ITEM_ART.set(item, src);
+    if (mode.world === 'meadow') ANIMAL_ART.set(item[0], src);
+  });
+}
+function loadRoomArt(i) {
+  if (!ROOM_ART.has(i)) {
+    const sources = MODES[i].d.map(item => ITEM_ART.get(item)).filter(Boolean);
+    const ready = Promise.all(sources.map(src => new Promise(resolve => {
+      const image = new Image();
+      image.onload = () => { ITEM_ART_IMAGE.set(src, image); resolve(); };
+      image.onerror = resolve;
+      image.src = src;
+    }))).then(() => {
+      ROOM_ART_READY.add(i);
+      buildWorld();
+    });
+    ROOM_ART.set(i, ready);
+  }
+  return ROOM_ART.get(i);
+}
+function itemSprite(item, size) {
+  return objSprite(item[0], size, ITEM_ART.get(item));
 }
 const CS = ['#e8262c', '#3fb4ff', '#3ecf8e', '#ffc83d', '#9b6bff', '#ff8a4c', '#2a5fd6', '#ff6fae', '#8a5226', '#26262e', '#cfd3dc', '#868d99'], LS = ['#ff9a9a', '#b8e4ff', '#b8f2d6', '#ffeaa8', '#d9c8ff', '#ffd1b5', '#a9c4ff', '#ffd0e6', '#d9a978', '#7a7a88', '#ffffff', '#d8dce3'];
 function bead(x, cx, cy, r, c) {
@@ -848,14 +872,15 @@ function face(x, u, ey) {
   x.strokeStyle = '#2b2440'; x.lineWidth = u * .05; x.lineCap = 'round';
   x.beginPath(); x.arc(0, ey + u * .08, u * .12, .3, Math.PI - .3); x.stroke();
 }
-function glyph(x, e, cx, cy, s) {
+function glyph(x, e, cx, cy, s, image) {
+  if (image) {
+    const side = s * 1.35;
+    const scale = side / Math.max(image.naturalWidth, image.naturalHeight);
+    const width = image.naturalWidth * scale, height = image.naturalHeight * scale;
+    x.drawImage(image, cx - width / 2, cy - height / 2, width, height);
+    return;
+  }
   if (e[0] !== '~') {
-    const src = ANIMAL_IMAGE.get(e);
-    if (src) {
-      let image = ANIMAL_IMAGES.get(src);
-      if (!image) { image = new Image(); ANIMAL_IMAGES.set(src, image); image.onload = () => objCache.clear(); image.src = src; }
-      if (image.complete && image.naturalWidth) { const side = s * 1.35; x.drawImage(image, cx-side/2, cy-side/2, side, side); return; }
-    }
     x.font = s + 'px ' + EF; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = '#000'; x.fillText(e, cx, cy); return;
   }
   const k = e.slice(1), u = s / 2, c = BR[k];
@@ -1347,32 +1372,34 @@ function trimCache(map, n) {
 }
 // реальные границы картинки (у каждого шрифта эмодзи свои отступы) — меряем прямо на устройстве
 const gBox = new Map(); let mC = null;
-function glyphBox(e) {
-  if (gBox.has(e)) return gBox.get(e);
+function glyphBox(e, key, image) {
+  if (gBox.has(key)) return gBox.get(key);
   const fs = 64, n = 200;
   if (!mC) { mC = document.createElement('canvas'); mC.width = mC.height = n; }
   const x = mC.getContext('2d', { willReadFrequently: true });
   x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, n, n);
-  glyph(x, e, n / 2, n / 2, fs);
+  glyph(x, e, n / 2, n / 2, fs, image);
   let d; try { d = x.getImageData(0, 0, n, n).data; } catch (er) { return { cx: 0, cy: 0, w: 1, h: 1, ok: 0 }; }
   let x0 = n, y0 = n, x1 = -1, y1 = -1;
   for (let y = 0; y < n; y++) for (let xx = 0; xx < n; xx++) if (d[(y * n + xx) * 4 + 3] > 24) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (y < y0) y0 = y; if (y > y1) y1 = y; }
   if (x1 < 0) return { cx: 0, cy: 0, w: 1, h: 1, ok: 0 };
   const r = { cx: ((x0 + x1 + 1) / 2 - n / 2) / fs, cy: ((y0 + y1 + 1) / 2 - n / 2) / fs, w: (x1 - x0 + 1) / fs, h: (y1 - y0 + 1) / fs, ok: 1 };
-  gBox.set(e, r); return r;
+  gBox.set(key, r); return r;
 }
 // картинка предмета: точно по центру и целиком в квадрате 0,95·b
-function objSprite(e, size) {
-  const b = Math.max(16, Math.round(size / 8) * 8), k = e + '|' + b;
+function objSprite(e, size, src) {
+  const image = ITEM_ART_IMAGE.get(src);
+  const key = image ? src : e;
+  const b = Math.max(16, Math.round(size / 8) * 8), k = key + '|' + b;
   let s = objCache.get(k);
   if (s) { objCache.delete(k); objCache.set(k, s); return s; }
-  const g = glyphBox(e), sc = g.ok ? clamp(.95 / Math.max(g.w, g.h), .5, 1.35) : 1, fs = b * sc;
+  const g = glyphBox(e, key, image), sc = g.ok ? clamp(.95 / Math.max(g.w, g.h), .5, 1.35) : 1, fs = b * sc;
   const S2 = Math.ceil(b * 1.5), [c, x] = mkCanvas(S2), hh = g.ok ? g.h * fs / 2 : b * .45;
   x.save(); x.translate(S2 / 2, S2 / 2 + Math.min(hh, b * .5) * .92); x.scale(1, .3);
   const gr = x.createRadialGradient(0, 0, 0, 0, 0, b * .45);
   gr.addColorStop(0, 'rgba(40,60,90,.16)'); gr.addColorStop(1, 'rgba(40,60,90,0)');
   x.fillStyle = gr; x.beginPath(); x.arc(0, 0, b * .45, 0, 7); x.fill(); x.restore();
-  glyph(x, e, S2 / 2 - g.cx * fs, S2 / 2 - g.cy * fs, fs);
+  glyph(x, e, S2 / 2 - g.cx * fs, S2 / 2 - g.cy * fs, fs, image);
   s = { c, S: S2, b };
   if (g.ok) { objCache.set(k, s); trimCache(objCache, 90); }
   return s;
@@ -2282,7 +2309,8 @@ function buildWorld() {
   const nextMode = pendingMode ?? md;
   const path = scenePath(nextMode);
   const image = loadScene(path);
-  if (!image.complete || !image.naturalWidth) return;
+  loadRoomArt(nextMode);
+  if (!image.complete || !image.naturalWidth || !ROOM_ART_READY.has(nextMode)) return;
 
   const switchingRoom = nextMode !== md;
   if (switchingRoom) fadeA = 0;
@@ -2441,7 +2469,7 @@ const feedE = () => { const f = gm === 'learn' && MODES[md].feed; return f ? f[f
 function drawFeeder(k) {
   const e = feedE(); if (!e) return;
   const f = feeder; f.chomp = Math.max(0, f.chomp - .05 * k); f.bounce = Math.max(0, f.bounce - .04 * k); f.swap = Math.min(1, f.swap + .05 * k);
-  const sp = objSprite(e, f.s), ch = Math.sin(f.chomp * Math.PI * 3) * .12, bo = Math.sin(f.bounce * Math.PI) * f.s * .2;
+  const sp = objSprite(e, f.s, ANIMAL_ART.get(e)), ch = Math.sin(f.chomp * Math.PI * 3) * .12, bo = Math.sin(f.bounce * Math.PI) * f.s * .2;
   ctx.save(); ctx.translate(f.x, f.y - bo); ctx.scale(f.swap * (1 + ch), f.swap * (1 - ch));
   ctx.drawImage(sp.c, -sp.S * f.s / sp.b / 2, -sp.S * f.s / sp.b / 2, sp.S * f.s / sp.b, sp.S * f.s / sp.b);
   ctx.restore();
@@ -2571,7 +2599,7 @@ function renderHud(hit) {
     if (F2.kind === 'sound' && !F2.ok) { const q = document.createElement('span'); q.className = 'q'; q.textContent = '?'; b.appendChild(q); }
     else {
       const c = document.createElement('canvas'); c.width = c.height = Math.round(62 * DPR);
-      const x = c.getContext('2d'); x.scale(DPR, DPR); const sp4 = objSprite(F2.tgt[0], 48), d = sp4.S * 54 / (sp4.b * .95);
+      const x = c.getContext('2d'); x.scale(DPR, DPR); const sp4 = itemSprite(F2.tgt, 48), d = sp4.S * 54 / (sp4.b * .95);
       x.drawImage(sp4.c, 31 - d / 2, 31 - d / 2, d, d); b.appendChild(c);
     }
     const sk = document.createElement('span'); sk.className = 'spk'; sk.textContent = '🔊'; b.appendChild(sk);
@@ -2601,8 +2629,9 @@ function makeBubble(x, y, rf, type, ci, idx) {
   b.vy = b.vy0; skin(b);
   return b;
 }
-function skin(b) { b.sh = shell(b.ci, b.r, b.type === 'big' ? 'n' : b.type); b.ob = objSprite(b.it[0], b.r * 1.05); }
+function skin(b) { b.sh = shell(b.ci, b.r, b.type === 'big' ? 'n' : b.type); b.ob = itemSprite(b.it, b.r * 1.05); }
 function spawn(first) {
+  if (!ROOM_ART_READY.has(md)) return;
   if (bubbles.length >= capB() && !needTarget()) return;
   const type = first ? 'n' : pickType(), rf = gm === 'catch' ? rnd(.095, .12) : rnd(.1, .135);
   const r = rf * M * (type === 'big' ? 1.5 : 1);
@@ -2640,7 +2669,7 @@ function pop(b, o) {
   if (!o.quiet) popSound(b);
   if (gm !== 'learn') {
     if (gm === 'find') findPop(b); else catchPop(b, o);
-    if (b.type !== 'rain' && b.type !== 'life') { crits.push({ e: b.it[0], ob: objSprite(b.it[0], b.r * 1.4), x: b.x, y: b.y, s: b.r * 1.4, vy: -1.6, sc: .7, a: 1 }); if (crits.length > 7) crits.shift(); }
+    if (b.type !== 'rain' && b.type !== 'life') { crits.push({ e: b.it[0], ob: itemSprite(b.it, b.r * 1.4), x: b.x, y: b.y, s: b.r * 1.4, vy: -1.6, sc: .7, a: 1 }); if (crits.length > 7) crits.shift(); }
     if (jarN >= jarCap()) { jarN = 0; jarCols = []; jarUp(); }
     return;
   }
@@ -2662,8 +2691,8 @@ function pop(b, o) {
     else if (Math.random() < .3) setMascot('happy', 1);
   }
   if (b.type !== 'rain') {
-    if (MODES[md].feed) crits.push({ e: b.it[0], ob: objSprite(b.it[0], b.r * 1.2), x: b.x, y: b.y, s: b.r * 1.2, fly: 0, x0: b.x, y0: b.y, a: 1, sc: 1, it: b.it });
-    else crits.push({ e: b.it[0], ob: objSprite(b.it[0], b.r * 1.5), x: b.x, y: b.y, s: b.r * 1.5, vy: -1.6, sc: .7, a: 1 });
+    if (MODES[md].feed) crits.push({ e: b.it[0], ob: itemSprite(b.it, b.r * 1.2), x: b.x, y: b.y, s: b.r * 1.2, fly: 0, x0: b.x, y0: b.y, a: 1, sc: 1, it: b.it });
+    else crits.push({ e: b.it[0], ob: itemSprite(b.it, b.r * 1.5), x: b.x, y: b.y, s: b.r * 1.5, vy: -1.6, sc: .7, a: 1 });
     if (crits.length > 7) crits.shift();
   }
   if (jarN >= jarCap()) milestone();
@@ -2894,7 +2923,7 @@ function enterMode(i) {
   md = i; lastIdx = -1;
   mb.forEach((q, k) => q.classList.toggle('on', k === i)); updMbtn();
   placeActors();
-  for (const b of bubbles) { if (b.type === 'rain') continue; const idx = nextItem(); b.it = items()[idx]; if (isCol(md)) b.ci = colCi(idx); skin(b); }
+  for (const b of bubbles) { if (b.type === 'rain' || b.type === 'life') continue; const idx = nextItem(); b.it = items()[idx]; b.ci = isCol(md) ? colCi(idx) : b.ci % 6; skin(b); }
   if (started) { loadVoice('g' + i); if (gm === 'find') { gTok++; F2.tgt = null; renderHud(); sayK('mo' + i, () => later(newTarget, 200)); } else sayK('mo' + i); }
 }
 const fadeC = document.createElement('canvas'); let fadeA = 0;
@@ -2986,7 +3015,7 @@ let galOpen = false, galMd = 0;
 function drawBall(c, it, ci, size) {
   c.width = c.height = Math.round(size * DPR); const x = c.getContext('2d'); x.scale(DPR, DPR);
   const R = size * .44, sh = shell(ci, R, 'n'), L = sh.L * R / sh.rb; x.drawImage(sh.c, size / 2 - L / 2, size / 2 - L / 2, L, L);
-  const ob = objSprite(it[0], R * 1.05), os = ob.S * (R * 1.05) / ob.b; x.drawImage(ob.c, size / 2 - os / 2, size / 2 - os / 2, os, os);
+  const ob = itemSprite(it, R * 1.05), os = ob.S * (R * 1.05) / ob.b; x.drawImage(ob.c, size / 2 - os / 2, size / 2 - os / 2, os, os);
 }
 function openGallery(m) { galOpen = true; $('gal').classList.add('on'); renderGallery(m); }
 function closeGallery() { galOpen = false; $('gal').classList.remove('on'); }
@@ -2998,6 +3027,10 @@ function renderGallery(m) {
     b.addEventListener('click', () => { audio(); renderGallery(k); loadVoice('g' + k); sayK('mo' + k); });
     tabs.appendChild(b);
   });
+  if (!ROOM_ART_READY.has(m)) {
+    loadRoomArt(m).then(() => { if (galOpen && galMd === m) renderGallery(m); });
+    return;
+  }
   MODES[m].d.forEach((it, i) => {
     const b = el('button', { 'aria-label': it[1] }), c = document.createElement('canvas');
     drawBall(c, it, MODES[m].colors ? colCi(i) : i % 6, 92);
@@ -3234,10 +3267,10 @@ function frame(t) {
 
 // ---------- запуск ----------
 renderModes(); updMbtn(); resize(); autoNight(); loadXIndex(); 
-preloadAnimalImages().then(() => { for (let i = 0; i < 4; i++) spawn(true); });
+loadRoomArt(0).then(() => { if (!bubbles.length) for (let i = 0; i < 4; i++) spawn(true); });
 requestAnimationFrame(loop);
 $('dn').textContent = night ? '☀️' : '🌙';
-if (!IN_VK && 'serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+if (!IN_VK && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
 </html>
